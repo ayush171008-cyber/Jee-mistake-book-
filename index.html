@@ -1,46 +1,663 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE Mistake Book</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JEE Mistake Notebook - Offline Tablet App</title>
+  <style>
+    :root {
+      --bg-main: #0c0d0f;
+      --bg-surface: #141619;
+      --bg-surface-hover: #1c1f24;
+      --border-color: #262a33;
+      --text-primary: #f1f3f5;
+      --text-secondary: #9aa0a6;
+      --accent-blue: #3b82f6;
+      --accent-wrong: #ef4444;
+      --accent-unattempted: #f59e0b;
+      --accent-success: #10b981;
+      --sidebar-width: 250px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-main); background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 0); background-size: 24px 24px; color: var(--text-primary); height: 100vh; overflow: hidden; }
+    
+    .app-container { display: flex; height: 100vh; width: 100vw; }
+    
+    /* Sidebar */
+    .sidebar { width: var(--sidebar-width); background-color: var(--bg-surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; }
+    .sidebar-header { padding: 20px; font-size: 1rem; font-weight: 700; border-bottom: 1px solid var(--border-color); color: #fff; display: flex; justify-content: space-between; align-items: center; }
+    .sidebar-nav { list-style: none; padding: 12px; overflow-y: auto; flex: 1; }
+    .nav-item { padding: 12px 14px; border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
+    .nav-item:hover, .nav-item.active { background-color: var(--bg-surface-hover); color: var(--text-primary); }
+
+    /* Main Workspace */
+    .main-workspace { flex: 1; display: flex; height: 100vh; overflow: hidden; background: var(--bg-main); }
+    .pane { border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; overflow: hidden; background: var(--bg-main); }
+    .pane-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.95rem; background-color: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; min-height: 60px; }
+    .pane-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+    /* Buttons & Inputs */
+    button, .btn { background: var(--bg-surface-hover); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
+    button:hover { opacity: 0.9; border-color: var(--text-secondary); }
+    button.primary { background-color: var(--accent-blue); border-color: var(--accent-blue); color: #fff; font-weight: 600; }
+    button.danger { background-color: rgba(239, 68, 68, 0.15); color: var(--accent-wrong); border-color: rgba(239, 68, 68, 0.3); }
+    
+    input, select, textarea { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; width: 100%; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent-blue); }
+
+    /* Cards & Lists */
+    .card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: 0.15s; }
+    .card:hover { border-color: var(--accent-blue); background: var(--bg-surface-hover); }
+    .badge { display: inline-block. padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .badge-wrong { background: rgba(239, 68, 68, 0.2); color: var(--accent-wrong); }
+    .badge-unattempted { background: rgba(245, 158, 11, 0.2); color: var(--accent-unattempted); }
+
+    /* Modal Overlay */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .modal { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px; width: 100%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg-main); }
+
+    .empty-state { text-align: center; color: var(--text-secondary); padding: 40px 20px; font-size: 0.9rem; }
+    .tag { display: inline-block; background: var(--bg-main); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 4px; color: var(--text-secondary); }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <h1 id="app-title" class="clickable">JEE Mistake Book</h1>
-            <div class="header-actions">
-                <button id="theme-toggle" aria-label="Toggle Theme">🌓</button>
-                <button id="backup-menu-btn" aria-label="Backup Options">⚙️ Backup</button>
-            </div>
-        </div>
-    </header>
 
-    <main id="main-content">
-        </main>
+  <div class="app-container">
+    <!-- Persistent Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span>JEE Notebook</span>
+        <span style="font-size:0.7rem; color:var(--accent-success); font-weight:400;">● Offline</span>
+      </div>
+      <ul class="sidebar-nav">
+        <li class="nav-item active" onclick="switchTab('dashboard', this)">Dashboard</li>
+        <li class="nav-item" onclick="switchTab('Physics', this)">Physics</li>
+        <li class="nav-item" onclick="switchTab('Chemistry', this)">Chemistry</li>
+        <li class="nav-item" onclick="switchTab('Mathematics', this)">Mathematics</li>
+        <li class="nav-item" onclick="switchTab('revision', this)">Revision Due</li>
+        <li class="nav-item" onclick="switchTab('search', this)">Global Search</li>
+        <li class="nav-item" onclick="switchTab('statistics', this)">Statistics</li>
+        <li class="nav-item" onclick="switchTab('archive', this)">Archive / Trash</li>
+        <li class="nav-item" onclick="switchTab('settings', this)">Settings & Backup</li>
+      </ul>
+    </aside>
 
-    <div id="backup-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3>Data Management</h3>
-            <div class="modal-buttons">
-                <button id="export-btn" class="btn primary-btn">📥 Export JSON Backup</button>
-                <label for="import-file" class="btn secondary-btn label-btn">📤 Import JSON Backup</label>
-                <input type="file" id="import-file" accept=".json" style="display:none;">
-            </div>
-            <button class="btn close-modal-btn">Close</button>
-        </div>
+    <!-- Dynamic Workspace -->
+    <div class="main-workspace" id="workspace">
+      <!-- Injected dynamically by JS -->
     </div>
+  </div>
 
-    <div id="lightbox-modal" class="modal hidden">
-        <div class="lightbox-content">
-            <span class="close-lightbox">&times;</span>
-            <img id="lightbox-img" src="" alt="Zoomed view">
+  <!-- Add/Edit Mistake Modal -->
+  <div class="modal-overlay" id="mistake-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span id="modal-title-text">Add New Mistake</span>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-secondary);">Subject</label>
+            <select id="m-subject" onchange="updateChapterDropdown()">
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Mathematics">Mathematics</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-secondary);">Chapter</label>
+            <select id="m-chapter"></select>
+          </div>
         </div>
+        <div>
+          <label style="font-size:0.8rem; color:var(--text-secondary);">Category</label>
+          <select id="m-category">
+            <option value="Wrong">Wrong Question</option>
+            <option value="Unattempted">Unattempted Question</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; color:var(--text-secondary);">Question Title / Summary</label>
+          <input type="text" id="m-title" placeholder="e.g., Block on rough inclined plane">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; color:var(--text-secondary);">Description / Question Text</label>
+          <textarea id="m-desc" rows="3" placeholder="Paste question or notes here... (Supports LaTeX like \frac{dQ}{dt})"></textarea>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-secondary);">Primary Mistake Reason</label>
+            <select id="m-reason">
+              <option value="Conceptual mistake">Conceptual mistake</option>
+              <option value="Formula forgotten">Formula forgotten</option>
+              <option value="Calculation error">Calculation error</option>
+              <option value="Misread question">Misread question</option>
+              <option value="Wrong approach">Wrong approach</option>
+              <option value="Careless mistake">Careless mistake</option>
+              <option value="Time pressure">Time pressure</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.8rem; color:var(--text-secondary);">Tags (comma separated)</label>
+            <input type="text" id="m-tags" placeholder="#rotation, #sign-error">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; color:var(--text-secondary);">What should I have thought? / Correct Approach</label>
+          <textarea id="m-approach" rows="2" placeholder="Note down the correct thought process..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="saveMistake()">Save Mistake</button>
+      </div>
     </div>
+  </div>
 
-    <script src="script.js" type="module"></script>
+  <!-- Re-Attempt Mode Modal -->
+  <div class="modal-overlay" id="reattempt-modal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <span>Re-Attempt Mode</span>
+        <button onclick="closeReattemptModal()">✕</button>
+      </div>
+      <div class="modal-body" id="reattempt-body">
+        <!-- Loaded dynamically -->
+      </div>
+      <div class="modal-footer" id="reattempt-footer">
+        <!-- Loaded dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ALLEN Syllabus Configuration Data
+    const syllabus = {
+      Physics: ["Units & Measurements", "Kinematics", "Laws of Motion", "Work, Energy & Power", "Rotational Motion", "Gravitation", "Thermodynamics", "Electrostatics", "Current Electricity", "Optics", "Modern Physics"],
+      Chemistry: ["Mole Concept", "Atomic Structure", "Chemical Bonding", "Periodic Table", "GOC", "Hydrocarbons", "Electrochemistry", "Chemical Kinetics", "Coordination Compounds"],
+      Mathematics: ["Quadratic Equations", "Matrices & Determinants", "Limits & Continuity", "Integral Calculus", "Coordinate Geometry", "Vectors & 3D", "Probability"]
+    };
+
+    // IndexedDB Wrapper
+    const dbName = "JEENotebookDB";
+    let db;
+
+    function initDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(dbName, 1);
+        request.onerror = e => reject(e);
+        request.onsuccess = e => { db = e.target.result; resolve(db); };
+        request.onupgradeneeded = e => {
+          const dbInstance = e.target.result;
+          if (!dbInstance.objectStoreNames.contains("mistakes")) {
+            dbInstance.createObjectStore("mistakes", { keyPath: "id", autoIncrement: true });
+          }
+        };
+      });
+    }
+
+    async function getAllMistakes() {
+      return new Promise((resolve) => {
+        const tx = db.transaction("mistakes", "readonly");
+        const store = tx.objectStore("mistakes");
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+      });
+    }
+
+    async function saveMistakeToDB(data) {
+      return new Promise((resolve) => {
+        const tx = db.transaction("mistakes", "readwrite");
+        const store = tx.objectStore("mistakes");
+        if (data.id) {
+          store.put(data);
+        } else {
+          delete data.id;
+          data.createdAt = new Date().toISOString();
+          data.isArchived = false;
+          data.nextRevisionDate = new Date(Date.now() + 86400000).toISOString();
+          data.reattemptHistory = [];
+          store.add(data);
+        }
+        tx.oncomplete = () => resolve(true);
+      });
+    }
+
+    async function deleteMistakeFromDB(id, permanent = false) {
+      const mistakes = await getAllMistakes();
+      const m = mistakes.find(item => item.id === id);
+      if (!m) return;
+      const tx = db.transaction("mistakes", "readwrite");
+      const store = tx.objectStore("mistakes");
+      if (permanent) {
+        store.delete(id);
+      } else {
+        m.isArchived = !m.isArchived;
+        store.put(m);
+      }
+      tx.oncomplete = () => loadView(currentTab);
+    }
+
+    let currentTab = 'dashboard';
+    let activeSubject = 'Physics';
+    let activeChapter = '';
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initDB();
+      switchTab('dashboard', document.querySelector('.nav-item'));
+      setupKeyboardShortcuts();
+    });
+
+    async function switchTab(tab, el) {
+      if (el) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+      }
+      currentTab = tab;
+      const workspace = document.getElementById('workspace');
+
+      if (tab === 'dashboard') {
+        renderDashboard(workspace);
+      } else if (['Physics', 'Chemistry', 'Mathematics'].includes(tab)) {
+        activeSubject = tab;
+        renderChapterPane(workspace, activeSubject);
+      } else if (tab === 'revision') {
+        renderRevisionView(workspace);
+      } else if (tab === 'search') {
+        renderSearchView(workspace);
+      } else if (tab === 'statistics') {
+        renderStatisticsView(workspace);
+      } else if (tab === 'archive') {
+        renderArchiveView(workspace);
+      } else if (tab === 'settings') {
+        renderSettingsView(workspace);
+      }
+    }
+
+    // --- DASHBOARD VIEW ---
+    async function renderDashboard(container) {
+      const mistakes = await getAllMistakes();
+      const active = mistakes.filter(m => !m.isArchived);
+      const wrongCount = active.filter(m => m.category === 'Wrong').length;
+      const unattemptedCount = active.filter(m => m.category === 'Unattempted').length;
+      const physicsCount = active.filter(m => m.subject === 'Physics').length;
+      const chemCount = active.filter(m => m.subject === 'Chemistry').length;
+      const mathCount = active.filter(m => m.subject === 'Mathematics').length;
+
+      container.innerHTML = `
+        <div class="pane" style="flex:1;">
+          <div class="pane-header">
+            <span>Dashboard Overview</span>
+            <button class="primary" onclick="openModal()">+ Add Mistake</button>
+          </div>
+          <div class="pane-body" style="display:flex; flex-direction:column; gap:20px;">
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+              <div class="card" style="text-align:center;"><h3>${active.length}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Total Mistakes</p></div>
+              <div class="card" style="text-align:center;"><h3 style="color:var(--accent-wrong);">${wrongCount}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Wrong Questions</p></div>
+              <div class="card" style="text-align:center;"><h3 style="color:var(--accent-unattempted);">${unattemptedCount}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Unattempted</p></div>
+              <div class="card" style="text-align:center;"><h3 style="color:var(--accent-success);">${physicsCount + chemCount + mathCount}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Active Notebooks</p></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+              <div class="card">
+                <h4 style="margin-bottom:10px; font-size:0.9rem;">Subject Breakdown</h4>
+                <p>Physics: <b>${physicsCount}</b></p>
+                <p>Chemistry: <b>${chemCount}</b></p>
+                <p>Mathematics: <b>${mathCount}</b></p>
+              </div>
+              <div class="card">
+                <h4 style="margin-bottom:10px; font-size:0.9rem;">Quick Tips for JEE</h4>
+                <p style="font-size:0.85rem; color:var(--text-secondary);">Regularly review your 'Wrong Questions' and practice re-attempt mode without checking solutions to solidify conceptual clarity.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- SUBJECT & CHAPTER VIEW ---
+    async function renderChapterPane(container, subject) {
+      const chapters = syllabus[subject];
+      container.innerHTML = `
+        <div class="pane" style="width: 320px;">
+          <div class="pane-header"><span>${subject} Chapters</span></div>
+          <div class="pane-body" id="chapter-list">
+            ${chapters.map(ch => `<div class="card" onclick="selectChapter('${subject}', '${ch}')">${ch}</div>`).join('')}
+          </div>
+        </div>
+        <div class="pane" style="flex:1;" id="mistake-pane">
+          <div class="pane-header">
+            <span id="selected-chapter-title">Select a Chapter</span>
+            <button class="primary" onclick="openModal()">+ Add Mistake</button>
+          </div>
+          <div class="pane-body" id="mistake-list-body">
+            <div class="empty-state">Select a chapter from the left to view mistakes.</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function selectChapter(subject, chapter) {
+      activeChapter = chapter;
+      document.getElementById('selected-chapter-title').innerText = `${subject} › ${chapter}`;
+      const mistakes = await getAllMistakes();
+      const filtered = mistakes.filter(m => m.subject === subject && m.chapter === chapter && !m.isArchived);
+
+      const wrongList = filtered.filter(m => m.category === 'Wrong');
+      const unattemptedList = filtered.filter(m => m.category === 'Unattempted');
+
+      const body = document.getElementById('mistake-list-body');
+      body.innerHTML = `
+        <div style="margin-bottom:20px;">
+          <h4 style="color:var(--accent-wrong); margin-bottom:10px; font-size:0.9rem;">Wrong Questions (${wrongList.length})</h4>
+          ${wrongList.length === 0 ? '<div class="empty-state" style="padding:10px;">No wrong questions here.</div>' : wrongList.map(m => renderMistakeCard(m)).join('')}
+        </div>
+        <div>
+          <h4 style="color:var(--accent-unattempted); margin-bottom:10px; font-size:0.9rem;">Unattempted Questions (${unattemptedList.length})</h4>
+          ${unattemptedList.length === 0 ? '<div class="empty-state" style="padding:10px;">No unattempted questions here.</div>' : unattemptedList.map(m => renderMistakeCard(m)).join('')}
+        </div>
+      `;
+    }
+
+    function renderMistakeCard(m) {
+      return `
+        <div class="card" onclick="openReattempt(${m.id})">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span class="badge ${m.category === 'Wrong' ? 'badge-wrong' : 'badge-unattempted'}">${m.category}</span>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">${m.reason || 'General'}</span>
+          </div>
+          <h5 style="font-size:0.95rem; margin-bottom:6px;">${m.title}</h5>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${m.description}</p>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>${(m.tags || '').split(',').map(t => t.trim() ? `<span class="tag">${t}</span>` : '').join('')}</div>
+            <div style="display:flex; gap:6px;">
+              <button onclick="event.stopPropagation(); editMistake(${m.id})">Edit</button>
+              <button class="danger" onclick="event.stopPropagation(); deleteMistakeFromDB(${m.id})">Archive</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- RE-ATTEMPT MODE ---
+    async function openReattempt(id) {
+      const mistakes = await getAllMistakes();
+      const m = mistakes.find(item => item.id === id);
+      if (!m) return;
+
+      const modalBody = document.getElementById('reattempt-body');
+      modalBody.innerHTML = `
+        <h3 style="margin-bottom:8px;">${m.title}</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;"><b>Chapter:</b> ${m.subject} › ${m.chapter}</p>
+        <div style="background:var(--bg-main); padding:14px; border-radius:6px; border:1px solid var(--border-color); margin-bottom:14px;">
+          <h4 style="font-size:0.85rem; color:var(--accent-unattempted); margin-bottom:6px;">Question / Description:</h4>
+          <p style="font-size:0.9rem;">${m.description}</p>
+        </div>
+        <div id="solution-reveal" style="display:none; background:rgba(16, 185, 129, 0.1); padding:14px; border-radius:6px; border:1px solid rgba(16, 185, 129, 0.3);">
+          <h4 style="font-size:0.85rem; color:var(--accent-success); margin-bottom:6px;">Correct Approach / Thinking:</h4>
+          <p style="font-size:0.9rem;">${m.correctApproach || 'No approach specified.'}</p>
+        </div>
+      `;
+
+      const modalFooter = document.getElementById('reattempt-footer');
+      modalFooter.innerHTML = `
+        <button onclick="document.getElementById('solution-reveal').style.display='block'">Show Solution</button>
+        <button class="primary" onclick="recordReattempt(${m.id}, 'Correct')">I Solved It</button>
+        <button class="danger" onclick="recordReattempt(${m.id}, 'Wrong')">Still Wrong</button>
+      `;
+
+      document.getElementById('reattempt-modal').style.display = 'flex';
+    }
+
+    function closeReattemptModal() {
+      document.getElementById('reattempt-modal').style.display = 'none';
+    }
+
+    async function recordReattempt(id, result) {
+      const mistakes = await getAllMistakes();
+      const m = mistakes.find(item => item.id === id);
+      if (m) {
+        m.reattemptHistory = m.reattemptHistory || [];
+        m.reattemptHistory.push({ date: new Date().toISOString(), result });
+        await saveMistakeToDB(m);
+        alert(`Re-attempt logged as: ${result}`);
+        closeReattemptModal();
+        if (activeChapter) selectChapter(activeSubject, activeChapter);
+      }
+    }
+
+    // --- REVISION DUE VIEW ---
+    async function renderRevisionView(container) {
+      const mistakes = await getAllMistakes();
+      const due = mistakes.filter(m => !m.isArchived);
+      container.innerHTML = `
+        <div class="pane" style="flex:1;">
+          <div class="pane-header"><span>Revision Due Today (${due.length})</span></div>
+          <div class="pane-body">
+            ${due.length === 0 ? '<div class="empty-state">No items scheduled for revision.</div>' : due.map(m => renderMistakeCard(m)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // --- SEARCH VIEW ---
+    async function renderSearchView(container) {
+      container.innerHTML = `
+        <div class="pane" style="flex:1;">
+          <div class="pane-header"><span>Global Search Notebook</span></div>
+          <div class="pane-body">
+            <input type="text" id="search-input" placeholder="Type keyword, title, tag, or reason..." oninput="executeSearch(this.value)" style="margin-bottom:16px;">
+            <div id="search-results"><div class="empty-state">Type above to search across all subjects.</div></div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function executeSearch(query) {
+      if (!query.trim()) {
+        document.getElementById('search-results').innerHTML = '<div class="empty-state">Type above to search across all subjects.</div>';
+        return;
+      }
+      const mistakes = await getAllMistakes();
+      const q = query.toLowerCase();
+      const matches = mistakes.filter(m => !m.isArchived && (
+        m.title.toLowerCase().includes(q) ||
+        m.description.toLowerCase().includes(q) ||
+        m.tags.toLowerCase().includes(q) ||
+        m.chapter.toLowerCase().includes(q)
+      ));
+
+      document.getElementById('search-results').innerHTML = matches.length === 0 ? 
+        '<div class="empty-state">No matching mistakes found.</div>' : 
+        matches.map(m => renderMistakeCard(m)).join('');
+    }
+
+    // --- STATISTICS VIEW ---
+    async function renderStatisticsView(container) {
+      const mistakes = await getAllMistakes();
+      const active = mistakes.filter(m => !m.isArchived);
+      container.innerHTML = `
+        <div class="pane" style="flex:1;">
+          <div class="pane-header"><span>Mistake Statistics</span></div>
+          <div class="pane-body" style="display:flex; flex-direction:column; gap:16px;">
+            <div class="card">
+              <h4>Total Active Entries: ${active.length}</h4>
+              <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:6px;">Breakdown of wrong vs unattempted questions across your JEE preparation.</p>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+              <div class="card">
+                <h4>By Category</h4>
+                <p>Wrong: <b>${active.filter(m => m.category === 'Wrong').length}</b></p>
+                <p>Unattempted: <b>${active.filter(m => m.category === 'Unattempted').length}</b></p>
+              </div>
+              <div class="card">
+                <h4>Top Mistake Reasons</h4>
+                <p>Conceptual: <b>${active.filter(m => m.reason === 'Conceptual mistake').length}</b></p>
+                <p>Calculation: <b>${active.filter(m => m.reason === 'Calculation error').length}</b></p>
+                <p>Formula: <b>${active.filter(m => m.reason === 'Formula forgotten').length}</b></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- ARCHIVE VIEW ---
+    async function renderArchiveView(container) {
+      const mistakes = await getAllMistakes();
+      const archived = mistakes.filter(m => m.isArchived);
+      container.innerHTML = `
+        <div class="pane" style="flex:1;">
+          <div class="pane-header"><span>Archive & Trash (${archived.length})</span></div>
+          <div class="pane-body">
+            ${archived.length === 0 ? '<div class="empty-state">Archive is empty.</div>' : archived.map(m => `
+              <div class="card">
+                <h5>${m.title} (${m.subject})</h5>
+                <div style="display:flex; gap:10px; margin-top:8px;">
+                  <button onclick="deleteMistakeFromDB(${m.id})">Restore</button>
+                  <button class="danger" onclick="deleteMistakeFromDB(${m.id}, true)">Delete Permanently</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // --- SETTINGS & BACKUP VIEW ---
+    async function renderSettingsView(container) {
+      const mistakes = await getAllMistakes();
+      container.innerHTML = `
+        <div class="pane" style="flex:1;">
+          <div class="pane-header"><span>Settings & Data Management</span></div>
+          <div class="pane-body" style="display:flex; flex-direction:column; gap:16px;">
+            <div class="card">
+              <h4>Local Storage Backup</h4>
+              <p style="color:var(--text-secondary); font-size:0.85rem; margin:6px 0;">Export your complete notebook as a JSON backup file to save securely on your device.</p>
+              <button class="primary" onclick="exportData(${JSON.stringify(mistakes).replace(/"/g, '&quot;')})">Export JSON Backup</button>
+            </div>
+            <div class="card">
+              <h4>Restore Data</h4>
+              <p style="color:var(--text-secondary); font-size:0.85rem; margin:6px 0;">Import a previously saved JSON backup file.</p>
+              <input type="file" id="import-file" onchange="importData(event)">
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function exportData(data) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `jee-notebook-backup-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+    }
+
+    async function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const items = JSON.parse(e.target.result);
+          for (let item of items) {
+            delete item.id;
+            await saveMistakeToDB(item);
+          }
+          alert('Backup restored successfully!');
+          switchTab('dashboard');
+        } catch(err) {
+          alert('Invalid backup file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // --- MODAL CONTROLS ---
+    function openModal(editData = null) {
+      updateChapterDropdown();
+      if (editData) {
+        document.getElementById('modal-title-text').innerText = 'Edit Mistake';
+        document.getElementById('edit-id').value = editData.id;
+        document.getElementById('m-subject').value = editData.subject;
+        updateChapterDropdown();
+        document.getElementById('m-chapter').value = editData.chapter;
+        document.getElementById('m-category').value = editData.category;
+        document.getElementById('m-title').value = editData.title;
+        document.getElementById('m-desc').value = editData.description;
+        document.getElementById('m-reason').value = editData.reason;
+        document.getElementById('m-tags').value = editData.tags;
+        document.getElementById('m-approach').value = editData.correctApproach;
+      } else {
+        document.getElementById('modal-title-text').innerText = 'Add New Mistake';
+        document.getElementById('edit-id').value = '';
+        document.getElementById('m-title').value = '';
+        document.getElementById('m-desc').value = '';
+        document.getElementById('m-tags').value = '';
+        document.getElementById('m-approach').value = '';
+      }
+      document.getElementById('mistake-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('mistake-modal').style.display = 'none';
+    }
+
+    function updateChapterDropdown() {
+      const sub = document.getElementById('m-subject').value;
+      const chSelect = document.getElementById('m-chapter');
+      chSelect.innerHTML = syllabus[sub].map(ch => `<option value="${ch}">${ch}</option>`).join('');
+    }
+
+    async function editMistake(id) {
+      const mistakes = await getAllMistakes();
+      const m = mistakes.find(item => item.id === id);
+      if (m) openModal(m);
+    }
+
+    async function saveMistake() {
+      const id = document.getElementById('edit-id').value;
+      const data = {
+        subject: document.getElementById('m-subject').value,
+        chapter: document.getElementById('m-chapter').value,
+        category: document.getElementById('m-category').value,
+        title: document.getElementById('m-title').value || 'Untitled Mistake',
+        description: document.getElementById('m-desc').value,
+        reason: document.getElementById('m-reason').value,
+        tags: document.getElementById('m-tags').value,
+        correctApproach: document.getElementById('m-approach').value
+      };
+      if (id) data.id = parseInt(id);
+      await saveMistakeToDB(data);
+      closeModal();
+      if (currentTab === activeSubject && activeChapter) {
+        selectChapter(activeSubject, activeChapter);
+      } else {
+        switchTab('dashboard');
+      }
+    }
+
+    // --- KEYBOARD SHORTCUTS ---
+    function setupKeyboardShortcuts() {
+      window.addEventListener('keydown', e => {
+        if (e.ctrlKey && e.key === 'n') {
+          e.preventDefault();
+          openModal();
+        } else if (e.ctrlKey && e.key === 'k') {
+          e.preventDefault();
+          switchTab('search');
+        } else if (e.key === 'Escape') {
+          closeModal();
+          closeReattemptModal();
+        }
+      });
+    }
+  </script>
 </body>
 </html>
