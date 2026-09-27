@@ -6,64 +6,75 @@
   <title>JEE Ultimate Mistake Notebook</title>
   <style>
     :root {
-      --bg-main: #0c0d0f;
-      --bg-surface: #141619;
-      --bg-surface-hover: #1c1f24;
-      --border-color: #262a33;
-      --text-primary: #f1f3f5;
-      --text-secondary: #9aa0a6;
-      --accent-blue: #3b82f6;
-      --accent-wrong: #ef4444;
-      --accent-unattempted: #f59e0b;
-      --accent-success: #10b981;
-      --sidebar-width: 250px;
+      --bg-main: #090a0f;
+      --bg-surface: #111318;
+      --bg-surface-hover: #181b22;
+      --border-color: #222630;
+      --border-focus: #3b4252;
+      --text-primary: #ededed;
+      --text-secondary: #9898a0;
+      --accent-blue: #60a5fa;
+      --accent-wrong: #f87171;
+      --accent-unattempted: #fbbf24;
+      --accent-success: #34d399;
+      --sidebar-width: 260px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: var(--bg-main); background-image: radial-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 0); background-size: 24px 24px; color: var(--text-primary); height: 100vh; overflow: hidden; }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+    body { background-color: var(--bg-main); color: var(--text-primary); height: 100vh; overflow: hidden; letter-spacing: -0.01em; }
     
     .app-container { display: flex; height: 100vh; width: 100vw; }
     
     /* Sidebar */
     .sidebar { width: var(--sidebar-width); background-color: var(--bg-surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 10; }
-    .sidebar-header { padding: 20px; font-size: 1rem; font-weight: 700; border-bottom: 1px solid var(--border-color); color: #fff; display: flex; justify-content: space-between; align-items: center; }
-    .sidebar-nav { list-style: none; padding: 12px; overflow-y: auto; flex: 1; }
-    .nav-item { padding: 12px 14px; border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-size: 0.9rem; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
-    .nav-item:hover, .nav-item.active { background-color: var(--bg-surface-hover); color: var(--text-primary); }
+    .sidebar-header { padding: 24px 20px; font-size: 0.95rem; font-weight: 600; border-bottom: 1px solid var(--border-color); color: #fff; display: flex; justify-content: space-between; align-items: center; letter-spacing: -0.02em; }
+    .sidebar-nav { list-style: none; padding: 16px 12px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { padding: 10px 14px; border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 0.875rem; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: all 0.15s ease; }
+    .nav-item:hover { background-color: var(--bg-surface-hover); color: var(--text-primary); }
+    .nav-item.active { background-color: var(--bg-surface-hover); color: #fff; border: 1px solid var(--border-color); }
 
     /* Main Workspace */
     .main-workspace { flex: 1; display: flex; height: 100vh; overflow: hidden; background: var(--bg-main); }
     .pane { border-right: 1px solid var(--border-color); display: flex; flex-direction: column; height: 100%; overflow: hidden; background: var(--bg-main); }
-    .pane-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.95rem; background-color: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; min-height: 60px; }
-    .pane-body { flex: 1; overflow-y: auto; padding: 16px; }
+    .pane-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.95rem; background-color: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; min-height: 65px; }
+    .pane-body { flex: 1; overflow-y: auto; padding: 24px; }
 
     /* Buttons & Inputs */
-    button, .btn { background: var(--bg-surface-hover); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
-    button:hover { opacity: 0.9; border-color: var(--text-secondary); }
-    button.primary { background-color: var(--accent-blue); border-color: var(--accent-blue); color: #fff; font-weight: 600; }
-    button.danger { background-color: rgba(239, 68, 68, 0.15); color: var(--accent-wrong); border-color: rgba(239, 68, 68, 0.3); }
+    button, .btn { background: var(--bg-surface-hover); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; transition: all 0.15s ease; }
+    button:hover { background-color: var(--border-color); border-color: var(--border-focus); }
+    button.primary { background-color: #fff; border-color: #fff; color: #000; font-weight: 600; }
+    button.primary:hover { background-color: #e0e0e0; border-color: #e0e0e0; }
+    button.danger { background-color: rgba(248, 113, 113, 0.1); color: var(--accent-wrong); border-color: rgba(248, 113, 113, 0.2); }
+    button.danger:hover { background-color: rgba(248, 113, 113, 0.2); }
     
-    input, select, textarea { background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; width: 100%; outline: none; }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent-blue); }
+    input, select, textarea { background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-primary); padding: 10px 14px; border-radius: 6px; font-size: 0.9rem; width: 100%; outline: none; transition: border-color 0.15s ease; }
+    input:focus, select:focus, textarea:focus { border-color: var(--border-focus); }
 
     /* Cards & Lists */
-    .card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: 0.15s; }
-    .card:hover { border-color: var(--accent-blue); background: var(--bg-surface-hover); }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-    .badge-wrong { background: rgba(239, 68, 68, 0.2); color: var(--accent-wrong); }
-    .badge-unattempted { background: rgba(245, 158, 11, 0.2); color: var(--accent-unattempted); }
+    .card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all 0.15s ease; }
+    .card:hover { border-color: var(--border-focus); background: var(--bg-surface-hover); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-wrong { background: rgba(248, 113, 113, 0.15); color: var(--accent-wrong); border: 1px solid rgba(248, 113, 113, 0.2); }
+    .badge-unattempted { background: rgba(251, 191, 36, 0.15); color: var(--accent-unattempted); border: 1px solid rgba(251, 191, 36, 0.2); }
 
     /* Modal Overlay */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-    .modal { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 10px; width: 100%; max-width: 750px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
-    .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
-    .modal-body { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
-    .modal-footer { padding: 16px 20px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg-main); }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .modal { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.95rem; }
+    .modal-body { padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 10px; background: var(--bg-main); }
 
-    .empty-state { text-align: center; color: var(--text-secondary); padding: 40px 20px; font-size: 0.9rem; }
+    .empty-state { text-align: center; color: var(--text-secondary); padding: 60px 20px; font-size: 0.875rem; }
     .tag { display: inline-block; background: var(--bg-main); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-right: 4px; color: var(--text-secondary); }
     
     .img-preview-container { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-    .img-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); }
+    .img-thumb { width: 70px; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color); }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-focus); }
   </style>
 </head>
 <body>
@@ -73,17 +84,17 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <span>JEE Notebook</span>
-        <span style="font-size:0.7rem; color:var(--accent-success); font-weight:400;">● Offline</span>
+        <span style="font-size:0.65rem; color:var(--accent-success); font-weight:500; background:rgba(52,211,153,0.1); padding:2px 6px; border-radius:4px;">● SECURE</span>
       </div>
       <ul class="sidebar-nav">
         <li class="nav-item active" onclick="switchTab('dashboard', this)">Dashboard</li>
         <li class="nav-item" onclick="switchTab('Physics', this)">Physics</li>
         <li class="nav-item" onclick="switchTab('Chemistry', this)">Chemistry</li>
         <li class="nav-item" onclick="switchTab('Mathematics', this)">Mathematics</li>
-        <li class="nav-item" onclick="switchTab('revision', this)">Revision Due</li>
+        <li class="nav-item" onclick="switchTab('revision', this)">Revision Queue</li>
         <li class="nav-item" onclick="switchTab('search', this)">Global Search</li>
-        <li class="nav-item" onclick="switchTab('statistics', this)">Statistics</li>
-        <li class="nav-item" onclick="switchTab('archive', this)">Archive / Trash</li>
+        <li class="nav-item" onclick="switchTab('statistics', this)">Analytics</li>
+        <li class="nav-item" onclick="switchTab('archive', this)">Archive & Trash</li>
         <li class="nav-item" onclick="switchTab('settings', this)">Settings & Backup</li>
       </ul>
     </aside>
@@ -96,14 +107,14 @@
   <div class="modal-overlay" id="mistake-modal">
     <div class="modal">
       <div class="modal-header">
-        <span id="modal-title-text">Add New Mistake</span>
+        <span id="modal-title-text">Add New Mistake Entry</span>
         <button onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-id">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div>
-            <label style="font-size:0.8rem; color:var(--text-secondary);">Subject</label>
+            <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">SUBJECT</label>
             <select id="m-subject" onchange="updateChapterDropdown()">
               <option value="Physics">Physics</option>
               <option value="Chemistry">Chemistry</option>
@@ -111,28 +122,28 @@
             </select>
           </div>
           <div>
-            <label style="font-size:0.8rem; color:var(--text-secondary);">Chapter</label>
+            <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">CHAPTER</label>
             <select id="m-chapter"></select>
           </div>
         </div>
         <div>
-          <label style="font-size:0.8rem; color:var(--text-secondary);">Category</label>
+          <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">MISTAKE CATEGORY</label>
           <select id="m-category">
             <option value="Wrong">Wrong Question</option>
             <option value="Unattempted">Unattempted Question</option>
           </select>
         </div>
         <div>
-          <label style="font-size:0.8rem; color:var(--text-secondary);">Question Title / Summary</label>
-          <input type="text" id="m-title" placeholder="e.g., Block on rough inclined plane">
+          <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">QUESTION TITLE / SUMMARY</label>
+          <input type="text" id="m-title" placeholder="e.g., Rotational inertia with sliding cylinder">
         </div>
         <div>
-          <label style="font-size:0.8rem; color:var(--text-secondary);">Description / Question Text</label>
-          <textarea id="m-desc" rows="3" placeholder="Paste question or notes here..."></textarea>
+          <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">QUESTION DESCRIPTION OR NOTES</label>
+          <textarea id="m-desc" rows="3" placeholder="Note down key specifics or full problem statement..."></textarea>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <div>
-            <label style="font-size:0.8rem; color:var(--text-secondary);">Primary Mistake Reason</label>
+            <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">ROOT CAUSE</label>
             <select id="m-reason">
               <option value="Conceptual mistake">Conceptual mistake</option>
               <option value="Formula forgotten">Formula forgotten</option>
@@ -144,23 +155,23 @@
             </select>
           </div>
           <div>
-            <label style="font-size:0.8rem; color:var(--text-secondary);">Tags (comma separated)</label>
-            <input type="text" id="m-tags" placeholder="#rotation, #sign-error">
+            <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">TAGS (COMMA SEPARATED)</label>
+            <input type="text" id="m-tags" placeholder="#mechanics, #sign-error">
           </div>
         </div>
         <div>
-          <label style="font-size:0.8rem; color:var(--text-secondary);">What should I have thought? / Correct Approach</label>
-          <textarea id="m-approach" rows="2" placeholder="Note down the correct thought process..."></textarea>
+          <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">CORRECT THOUGHT PROCESS / APPROACH</label>
+          <textarea id="m-approach" rows="2" placeholder="What should you have thought during the exam?"></textarea>
         </div>
         <div>
-          <label style="font-size:0.8rem; color:var(--text-secondary);">Upload Question / Solution Photos</label>
+          <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:6px; display:block;">ATTACH PHOTOS</label>
           <input type="file" id="m-images" accept="image/*" multiple onchange="handleImageUpload(event)">
           <div class="img-preview-container" id="img-preview-list"></div>
         </div>
       </div>
       <div class="modal-footer">
         <button onclick="closeModal()">Cancel</button>
-        <button class="primary" onclick="saveMistake()">Save Mistake</button>
+        <button class="primary" onclick="saveMistake()">Save Entry</button>
       </div>
     </div>
   </div>
@@ -187,13 +198,10 @@
         "Optics (Ray & Wave)", "Dual Nature of Matter & Radiation", "Atoms & Nuclei", "Electronic Devices", "Experimental Skills"
       ],
       Chemistry: [
-        // Physical Chemistry
         "Some Basic Concepts in Chemistry (Mole Concept)", "Atomic Structure", "Chemical Bonding & Molecular Structure", 
         "States of Matter", "Chemical Thermodynamics", "Solutions", "Equilibrium", "Redox Reactions & Electrochemistry", "Chemical Kinetics",
-        // Inorganic Chemistry
         "Classification of Elements & Periodicity", "Chemical Bonding (Advanced)", "Hydrogen", "S-Block Elements", 
         "P-Block Elements (Group 13-18)", "D- and F-Block Elements", "Coordination Compounds", "Environmental Chemistry",
-        // Organic Chemistry
         "Purification & Characterisation of Organic Compounds", "Some Basic Principles of Organic Chemistry (GOC)", 
         "Hydrocarbons", "Haloalkanes & Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", 
         "Organic Compounds Containing Nitrogen", "Biomolecules", "Polymers", "Principles Related to Practical Chemistry"
@@ -207,14 +215,15 @@
       ]
     };
 
-    const dbName = "JEENotebookDB";
-    let db;
+    const dbName = "JEENotebookDB_Pro";
+    let db = null;
     let tempImages = [];
 
     function initDB() {
       return new Promise((resolve, reject) => {
+        if (db) return resolve(db);
         const request = indexedDB.open(dbName, 1);
-        request.onerror = e => reject(e);
+        request.onerror = e => reject(e.target.error);
         request.onsuccess = e => { db = e.target.result; resolve(db); };
         request.onupgradeneeded = e => {
           const dbInstance = e.target.result;
@@ -226,17 +235,25 @@
     }
 
     async function getAllMistakes() {
-      return new Promise((resolve) => {
-        const tx = db.transaction("mistakes", "readonly");
-        const store = tx.objectStore("mistakes");
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-      });
+      try {
+        const database = await initDB();
+        return new Promise((resolve) => {
+          const tx = database.transaction("mistakes", "readonly");
+          const store = tx.objectStore("mistakes");
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => resolve([]);
+        });
+      } catch (err) {
+        console.error(err);
+        return [];
+      }
     }
 
     async function saveMistakeToDB(data) {
-      return new Promise((resolve) => {
-        const tx = db.transaction("mistakes", "readwrite");
+      const database = await initDB();
+      return new Promise((resolve, reject) => {
+        const tx = database.transaction("mistakes", "readwrite");
         const store = tx.objectStore("mistakes");
         if (data.id) {
           store.put(data);
@@ -244,11 +261,11 @@
           delete data.id;
           data.createdAt = new Date().toISOString();
           data.isArchived = false;
-          data.nextRevisionDate = new Date(Date.now() + 86400000).toISOString();
           data.reattemptHistory = [];
           store.add(data);
         }
         tx.oncomplete = () => resolve(true);
+        tx.onerror = e => reject(e.target.error);
       });
     }
 
@@ -256,7 +273,8 @@
       const mistakes = await getAllMistakes();
       const m = mistakes.find(item => item.id === id);
       if (!m) return;
-      const tx = db.transaction("mistakes", "readwrite");
+      const database = await initDB();
+      const tx = database.transaction("mistakes", "readwrite");
       const store = tx.objectStore("mistakes");
       if (permanent) {
         store.delete(id);
@@ -316,25 +334,25 @@
         <div class="pane" style="flex:1;">
           <div class="pane-header">
             <span>Dashboard Overview</span>
-            <button class="primary" onclick="openModal()">+ Add Mistake</button>
+            <button class="primary" onclick="openModal()">+ New Entry</button>
           </div>
           <div class="pane-body" style="display:flex; flex-direction:column; gap:20px;">
-            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
-              <div class="card" style="text-align:center;"><h3>${active.length}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Total Mistakes</p></div>
-              <div class="card" style="text-align:center;"><h3 style="color:var(--accent-wrong);">${wrongCount}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Wrong Questions</p></div>
-              <div class="card" style="text-align:center;"><h3 style="color:var(--accent-unattempted);">${unattemptedCount}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Unattempted</p></div>
-              <div class="card" style="text-align:center;"><h3 style="color:var(--accent-success);">${physicsCount + chemCount + mathCount}</h3><p style="color:var(--text-secondary); font-size:0.8rem;">Active Notebooks</p></div>
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px;">
+              <div class="card" style="text-align:center;"><h2 style="font-weight:600; font-size:1.8rem;">${active.length}</h2><p style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">TOTAL ACTIVE</p></div>
+              <div class="card" style="text-align:center;"><h2 style="font-weight:600; font-size:1.8rem; color:var(--accent-wrong);">${wrongCount}</h2><p style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">WRONG QUESTIONS</p></div>
+              <div class="card" style="text-align:center;"><h2 style="font-weight:600; font-size:1.8rem; color:var(--accent-unattempted);">${unattemptedCount}</h2><p style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">UNATTEMPTED</p></div>
+              <div class="card" style="text-align:center;"><h2 style="font-weight:600; font-size:1.8rem; color:var(--accent-success);">${physicsCount + chemCount + mathCount}</h2><p style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">LOGGED ENTRIES</p></div>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
               <div class="card">
-                <h4 style="margin-bottom:10px; font-size:0.9rem;">Subject Breakdown</h4>
-                <p>Physics: <b>${physicsCount}</b></p>
-                <p>Chemistry: <b>${chemCount}</b></p>
-                <p>Mathematics: <b>${mathCount}</b></p>
+                <h4 style="margin-bottom:12px; font-size:0.9rem; font-weight:600;">Subject Distribution</h4>
+                <p style="margin-bottom:8px;">Physics: <b style="float:right;">${physicsCount}</b></p>
+                <p style="margin-bottom:8px;">Chemistry: <b style="float:right;">${chemCount}</b></p>
+                <p>Mathematics: <b style="float:right;">${mathCount}</b></p>
               </div>
               <div class="card">
-                <h4 style="margin-bottom:10px; font-size:0.9rem;">Quick Tips for JEE</h4>
-                <p style="font-size:0.85rem; color:var(--text-secondary);">Regularly review your 'Wrong Questions' and practice re-attempt mode without checking solutions.</p>
+                <h4 style="margin-bottom:12px; font-size:0.9rem; font-weight:600;">Execution Strategy</h4>
+                <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">Consistency is your primary edge. Regularly cycle through your mistake notebooks and attempt questions clean without referencing solutions prematurely.</p>
               </div>
             </div>
           </div>
@@ -346,18 +364,18 @@
       const chapters = syllabus[subject];
       container.innerHTML = `
         <div class="pane" style="width: 320px;">
-          <div class="pane-header"><span>${subject} Chapters (${chapters.length})</span></div>
+          <div class="pane-header"><span>${subject} (${chapters.length})</span></div>
           <div class="pane-body" id="chapter-list">
-            ${chapters.map(ch => `<div class="card" onclick="selectChapter('${subject}', '${ch}')">${ch}</div>`).join('')}
+            ${chapters.map(ch => `<div class="card" style="padding:12px 16px; margin-bottom:8px; font-size:0.85rem;" onclick="selectChapter('${subject}', '${ch}')">${ch}</div>`).join('')}
           </div>
         </div>
         <div class="pane" style="flex:1;" id="mistake-pane">
           <div class="pane-header">
-            <span id="selected-chapter-title">Select a Chapter</span>
-            <button class="primary" onclick="openModal()">+ Add Mistake</button>
+            <span id="selected-chapter-title">Select a chapter</span>
+            <button class="primary" onclick="openModal()">+ New Entry</button>
           </div>
           <div class="pane-body" id="mistake-list-body">
-            <div class="empty-state">Select a chapter from the left to view mistakes.</div>
+            <div class="empty-state">Choose a chapter from the left panel to inspect mistakes.</div>
           </div>
         </div>
       `;
@@ -374,13 +392,13 @@
 
       const body = document.getElementById('mistake-list-body');
       body.innerHTML = `
-        <div style="margin-bottom:20px;">
-          <h4 style="color:var(--accent-wrong); margin-bottom:10px; font-size:0.9rem;">Wrong Questions (${wrongList.length})</h4>
-          ${wrongList.length === 0 ? '<div class="empty-state" style="padding:10px;">No wrong questions here.</div>' : wrongList.map(m => renderMistakeCard(m)).join('')}
+        <div style="margin-bottom:24px;">
+          <h4 style="color:var(--accent-wrong); margin-bottom:12px; font-size:0.85rem; font-weight:600; letter-spacing:0.03em;">WRONG QUESTIONS (${wrongList.length})</h4>
+          ${wrongList.length === 0 ? '<div class="empty-state" style="padding:20px;">No recorded mistakes.</div>' : wrongList.map(m => renderMistakeCard(m)).join('')}
         </div>
         <div>
-          <h4 style="color:var(--accent-unattempted); margin-bottom:10px; font-size:0.9rem;">Unattempted Questions (${unattemptedList.length})</h4>
-          ${unattemptedList.length === 0 ? '<div class="empty-state" style="padding:10px;">No unattempted questions here.</div>' : unattemptedList.map(m => renderMistakeCard(m)).join('')}
+          <h4 style="color:var(--accent-unattempted); margin-bottom:12px; font-size:0.85rem; font-weight:600; letter-spacing:0.03em;">UNATTEMPTED QUESTIONS (${unattemptedList.length})</h4>
+          ${unattemptedList.length === 0 ? '<div class="empty-state" style="padding:20px;">No unattempted questions recorded.</div>' : unattemptedList.map(m => renderMistakeCard(m)).join('')}
         </div>
       `;
     }
@@ -389,13 +407,13 @@
       const hasImages = m.images && m.images.length > 0;
       return `
         <div class="card" onclick="openReattempt(${m.id})">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <span class="badge ${m.category === 'Wrong' ? 'badge-wrong' : 'badge-unattempted'}">${m.category}</span>
             <span style="font-size:0.75rem; color:var(--text-secondary);">${m.reason || 'General'}</span>
           </div>
-          <h5 style="font-size:0.95rem; margin-bottom:6px;">${m.title}</h5>
-          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${m.description}</p>
-          ${hasImages ? `<div style="font-size:0.75rem; color:var(--accent-blue); margin-bottom:6px;">📷 ${m.images.length} attached photo(s)</div>` : ''}
+          <h5 style="font-size:0.95rem; font-weight:600; margin-bottom:6px;">${m.title}</h5>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:10px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.4;">${m.description}</p>
+          ${hasImages ? `<div style="font-size:0.75rem; color:var(--accent-blue); margin-bottom:8px;">📷 ${m.images.length} photo attached</div>` : ''}
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>${(m.tags || '').split(',').map(t => t.trim() ? `<span class="tag">${t}</span>` : '').join('')}</div>
             <div style="display:flex; gap:6px;">
@@ -413,31 +431,31 @@
       if (!m) return;
 
       const imagesHtml = m.images && m.images.length > 0 ? `
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
-          ${m.images.map(img => `<img src="${img}" class="img-thumb" style="width:100px; height:100px; cursor:pointer;" onclick="window.open('${img}')">`).join('')}
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+          ${m.images.map(img => `<img src="${img}" class="img-thumb" style="width:90px; height:90px; cursor:pointer;" onclick="window.open('${img}')">`).join('')}
         </div>
       ` : '';
 
       const modalBody = document.getElementById('reattempt-body');
       modalBody.innerHTML = `
-        <h3 style="margin-bottom:8px;">${m.title}</h3>
-        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;"><b>Chapter:</b> ${m.subject} › ${m.chapter}</p>
+        <h3 style="margin-bottom:6px; font-size:1.1rem; font-weight:600;">${m.title}</h3>
+        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:16px;"><b>Chapter:</b> ${m.subject} › ${m.chapter}</p>
         ${imagesHtml}
-        <div style="background:var(--bg-main); padding:14px; border-radius:6px; border:1px solid var(--border-color); margin-bottom:14px;">
-          <h4 style="font-size:0.85rem; color:var(--accent-unattempted); margin-bottom:6px;">Question / Description:</h4>
-          <p style="font-size:0.9rem;">${m.description}</p>
+        <div style="background:var(--bg-main); padding:16px; border-radius:8px; border:1px solid var(--border-color); margin-bottom:16px;">
+          <h4 style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:8px; letter-spacing:0.03em;">PROBLEM STATEMENT</h4>
+          <p style="font-size:0.9rem; line-height:1.5;">${m.description}</p>
         </div>
-        <div id="solution-reveal" style="display:none; background:rgba(16, 185, 129, 0.1); padding:14px; border-radius:6px; border:1px solid rgba(16, 185, 129, 0.3);">
-          <h4 style="font-size:0.85rem; color:var(--accent-success); margin-bottom:6px;">Correct Approach / Thinking:</h4>
-          <p style="font-size:0.9rem;">${m.correctApproach || 'No approach specified.'}</p>
+        <div id="solution-reveal" style="display:none; background:rgba(52, 211, 153, 0.05); padding:16px; border-radius:8px; border:1px solid rgba(52, 211, 153, 0.2);">
+          <h4 style="font-size:0.75rem; color:var(--accent-success); margin-bottom:8px; letter-spacing:0.03em;">CORRECT APPROACH</h4>
+          <p style="font-size:0.9rem; line-height:1.5;">${m.correctApproach || 'No approach specified.'}</p>
         </div>
       `;
 
       const modalFooter = document.getElementById('reattempt-footer');
       modalFooter.innerHTML = `
-        <button onclick="document.getElementById('solution-reveal').style.display='block'">Show Solution</button>
-        <button class="primary" onclick="recordReattempt(${m.id}, 'Correct')">I Solved It</button>
-        <button class="danger" onclick="recordReattempt(${m.id}, 'Wrong')">Still Wrong</button>
+        <button onclick="document.getElementById('solution-reveal').style.display='block'">Reveal Solution</button>
+        <button class="primary" onclick="recordReattempt(${m.id}, 'Correct')">Mark Solved</button>
+        <button class="danger" onclick="recordReattempt(${m.id}, 'Wrong')">Keep Active</button>
       `;
 
       document.getElementById('reattempt-modal').style.display = 'flex';
@@ -454,7 +472,6 @@
         m.reattemptHistory = m.reattemptHistory || [];
         m.reattemptHistory.push({ date: new Date().toISOString(), result });
         await saveMistakeToDB(m);
-        alert(`Re-attempt logged as: ${result}`);
         closeReattemptModal();
         if (activeChapter) selectChapter(activeSubject, activeChapter);
       }
@@ -465,9 +482,9 @@
       const due = mistakes.filter(m => !m.isArchived);
       container.innerHTML = `
         <div class="pane" style="flex:1;">
-          <div class="pane-header"><span>Revision Due (${due.length})</span></div>
+          <div class="pane-header"><span>Revision Queue (${due.length})</span></div>
           <div class="pane-body">
-            ${due.length === 0 ? '<div class="empty-state">No items scheduled for revision.</div>' : due.map(m => renderMistakeCard(m)).join('')}
+            ${due.length === 0 ? '<div class="empty-state">Queue is empty. Great job!</div>' : due.map(m => renderMistakeCard(m)).join('')}
           </div>
         </div>
       `;
@@ -476,10 +493,10 @@
     async function renderSearchView(container) {
       container.innerHTML = `
         <div class="pane" style="flex:1;">
-          <div class="pane-header"><span>Global Search Notebook</span></div>
+          <div class="pane-header"><span>Global Search</span></div>
           <div class="pane-body">
-            <input type="text" id="search-input" placeholder="Type keyword, title, tag, or reason..." oninput="executeSearch(this.value)" style="margin-bottom:16px;">
-            <div id="search-results"><div class="empty-state">Type above to search across all subjects.</div></div>
+            <input type="text" id="search-input" placeholder="Search by keyword, tag, title, or root cause..." oninput="executeSearch(this.value)" style="margin-bottom:16px;">
+            <div id="search-results"><div class="empty-state">Type above to search across all notebooks.</div></div>
           </div>
         </div>
       `;
@@ -487,7 +504,7 @@
 
     async function executeSearch(query) {
       if (!query.trim()) {
-        document.getElementById('search-results').innerHTML = '<div class="empty-state">Type above to search across all subjects.</div>';
+        document.getElementById('search-results').innerHTML = '<div class="empty-state">Type above to search across all notebooks.</div>';
         return;
       }
       const mistakes = await getAllMistakes();
@@ -496,7 +513,8 @@
         m.title.toLowerCase().includes(q) ||
         m.description.toLowerCase().includes(q) ||
         m.tags.toLowerCase().includes(q) ||
-        m.chapter.toLowerCase().includes(q)
+        m.chapter.toLowerCase().includes(q) ||
+        m.reason.toLowerCase().includes(q)
       ));
 
       document.getElementById('search-results').innerHTML = matches.length === 0 ? 
@@ -509,23 +527,23 @@
       const active = mistakes.filter(m => !m.isArchived);
       container.innerHTML = `
         <div class="pane" style="flex:1;">
-          <div class="pane-header"><span>Mistake Statistics</span></div>
+          <div class="pane-header"><span>Analytics & Insights</span></div>
           <div class="pane-body" style="display:flex; flex-direction:column; gap:16px;">
             <div class="card">
-              <h4>Total Active Entries: ${active.length}</h4>
-              <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:6px;">Breakdown of wrong vs unattempted questions across your JEE preparation.</p>
+              <h4 style="font-weight:600; margin-bottom:6px;">Total Active Database: ${active.length} entries</h4>
+              <p style="color:var(--text-secondary); font-size:0.85rem;">Comprehensive telemetry of your preparation friction points.</p>
             </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
               <div class="card">
-                <h4>By Category</h4>
-                <p>Wrong: <b>${active.filter(m => m.category === 'Wrong').length}</b></p>
-                <p>Unattempted: <b>${active.filter(m => m.category === 'Unattempted').length}</b></p>
+                <h4 style="font-weight:600; margin-bottom:12px;">By Category</h4>
+                <p style="margin-bottom:8px;">Wrong: <b style="float:right;">${active.filter(m => m.category === 'Wrong').length}</b></p>
+                <p>Unattempted: <b style="float:right;">${active.filter(m => m.category === 'Unattempted').length}</b></p>
               </div>
               <div class="card">
-                <h4>Top Mistake Reasons</h4>
-                <p>Conceptual: <b>${active.filter(m => m.reason === 'Conceptual mistake').length}</b></p>
-                <p>Calculation: <b>${active.filter(m => m.reason === 'Calculation error').length}</b></p>
-                <p>Formula: <b>${active.filter(m => m.reason === 'Formula forgotten').length}</b></p>
+                <h4 style="font-weight:600; margin-bottom:12px;">Primary Root Causes</h4>
+                <p style="margin-bottom:8px;">Conceptual: <b style="float:right;">${active.filter(m => m.reason === 'Conceptual mistake').length}</b></p>
+                <p style="margin-bottom:8px;">Calculation: <b style="float:right;">${active.filter(m => m.reason === 'Calculation error').length}</b></p>
+                <p>Formula: <b style="float:right;">${active.filter(m => m.reason === 'Formula forgotten').length}</b></p>
               </div>
             </div>
           </div>
@@ -540,10 +558,10 @@
         <div class="pane" style="flex:1;">
           <div class="pane-header"><span>Archive & Trash (${archived.length})</span></div>
           <div class="pane-body">
-            ${archived.length === 0 ? '<div class="empty-state">Archive is empty.</div>' : archived.map(m => `
+            ${archived.length === 0 ? '<div class="empty-state">Archive is clean.</div>' : archived.map(m => `
               <div class="card">
-                <h5>${m.title} (${m.subject})</h5>
-                <div style="display:flex; gap:10px; margin-top:8px;">
+                <h5 style="margin-bottom:8px; font-weight:600;">${m.title} (${m.subject})</h5>
+                <div style="display:flex; gap:10px;">
                   <button onclick="deleteMistakeFromDB(${m.id})">Restore</button>
                   <button class="danger" onclick="deleteMistakeFromDB(${m.id}, true)">Delete Permanently</button>
                 </div>
@@ -561,13 +579,13 @@
           <div class="pane-header"><span>Settings & Data Management</span></div>
           <div class="pane-body" style="display:flex; flex-direction:column; gap:16px;">
             <div class="card">
-              <h4>Local Storage Backup</h4>
-              <p style="color:var(--text-secondary); font-size:0.85rem; margin:6px 0;">Export your complete notebook as a JSON backup file to save securely on your device.</p>
+              <h4 style="font-weight:600; margin-bottom:6px;">Export Notebook Backup</h4>
+              <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:12px;">Download your complete database securely as a JSON file.</p>
               <button class="primary" onclick="exportData(${JSON.stringify(mistakes).replace(/"/g, '&quot;')})">Export JSON Backup</button>
             </div>
             <div class="card">
-              <h4>Restore Data</h4>
-              <p style="color:var(--text-secondary); font-size:0.85rem; margin:6px 0;">Import a previously saved JSON backup file.</p>
+              <h4 style="font-weight:600; margin-bottom:6px;">Restore From Backup</h4>
+              <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:12px;">Upload a previously saved backup file to restore entries.</p>
               <input type="file" id="import-file" onchange="importData(event)">
             </div>
           </div>
@@ -576,7 +594,7 @@
     }
 
     function exportData(data) {
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'json' });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -595,10 +613,10 @@
             delete item.id;
             await saveMistakeToDB(item);
           }
-          alert('Backup restored successfully!');
+          alert('Backup successfully imported.');
           switchTab('dashboard');
         } catch(err) {
-          alert('Invalid backup file.');
+          alert('Failed to parse backup file.');
         }
       };
       reader.readAsText(file);
@@ -622,7 +640,7 @@
       container.innerHTML = tempImages.map((img, idx) => `
         <div style="position:relative;">
           <img src="${img}" class="img-thumb">
-          <button style="position:absolute; top:-5px; right:-5px; padding:2px 6px; font-size:0.7rem;" onclick="removeTempImage(${idx})">✕</button>
+          <button style="position:absolute; top:-4px; right:-4px; padding:2px 5px; font-size:0.65rem;" onclick="removeTempImage(${idx})">✕</button>
         </div>
       `).join('');
     }
@@ -636,7 +654,7 @@
       updateChapterDropdown();
       tempImages = [];
       if (editData) {
-        document.getElementById('modal-title-text').innerText = 'Edit Mistake';
+        document.getElementById('modal-title-text').innerText = 'Edit Mistake Entry';
         document.getElementById('edit-id').value = editData.id;
         document.getElementById('m-subject').value = editData.subject;
         updateChapterDropdown();
@@ -649,7 +667,7 @@
         document.getElementById('m-approach').value = editData.correctApproach;
         tempImages = editData.images || [];
       } else {
-        document.getElementById('modal-title-text').innerText = 'Add New Mistake';
+        document.getElementById('modal-title-text').innerText = 'Add New Mistake Entry';
         document.getElementById('edit-id').value = '';
         document.getElementById('m-title').value = '';
         document.getElementById('m-desc').value = '';
